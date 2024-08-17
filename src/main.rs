@@ -23,9 +23,8 @@ fn main() {
             });
 
             if !file_contents.is_empty() {
-                panic!("Scanner not implemented");
-            } else {
-                println!("EOF  null"); // Placeholder, remove this line when implementing the scanner
+                scan_token(file_contents);
+                println!("EOF  null");
             }
         }
         _ => {
@@ -34,3 +33,22 @@ fn main() {
         }
     }
 }
+
+pub fn scan_token(file_content: String) {
+    file_content.chars().for_each(|c| {
+        match c {
+            '(' => println!("LEFT_PAREN {} null", c),
+            ')' => println!("RIGHT_PAREN {} null", c),
+            '{' => println!("_PAREN {} null", c),
+            '}' => println!("_PAREN {} null", c),
+            ',' => println!("_PAREN {} null", c),
+            '.' => println!("_PAREN {} null", c),
+            '-' => println!("_PAREN {} null", c),
+            '+' => println!("_PAREN {} null", c),
+            ';' => println!("_PAREN {} null", c),
+            '*' => println!("_PAREN {} null", c),
+            _ => (),
+        }
+    })
+}
+
