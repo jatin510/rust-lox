@@ -23,8 +23,7 @@ fn main() {
             });
 
             if !file_contents.is_empty() {
-                scan_token(file_contents);
-                println!("EOF  null");
+                scan_token(&file_contents);
             }
         }
         _ => {
@@ -34,21 +33,14 @@ fn main() {
     }
 }
 
-pub fn scan_token(file_content: String) {
+pub fn scan_token(file_content: &str) {
     file_content.chars().for_each(|c| {
         match c {
             '(' => println!("LEFT_PAREN {} null", c),
             ')' => println!("RIGHT_PAREN {} null", c),
-            '{' => println!("_PAREN {} null", c),
-            '}' => println!("_PAREN {} null", c),
-            ',' => println!("_PAREN {} null", c),
-            '.' => println!("_PAREN {} null", c),
-            '-' => println!("_PAREN {} null", c),
-            '+' => println!("_PAREN {} null", c),
-            ';' => println!("_PAREN {} null", c),
-            '*' => println!("_PAREN {} null", c),
             _ => (),
         }
-    })
+    });
+    println!("EOF  null");
 }
 
