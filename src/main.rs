@@ -38,7 +38,14 @@ pub fn scan_token(file_content: &str) {
             ')' => println!("RIGHT_PAREN {} null", c),
             '{' => println!("LEFT_BRACE {} null", c),
             '}' => println!("RIGHT_BRACE {} null", c),
-            _ => (),
+            '*' => println!("STAR {} null", c),
+            '.' => println!("DOT {} null", c),
+            ',' => println!("COMMA {} null", c),
+            '+' => println!("PLUS {} null", c),
+            '-' => println!("MINUS {} null", c),
+            '/' => println!("SLASH {} null", c),
+            ';' => println!("SEMICOLON {} null", c),
+            _ => (println!("not handled yet {} null", c)),
         }
     });
     println!("EOF  null");
