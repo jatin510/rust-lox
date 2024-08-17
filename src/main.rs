@@ -22,9 +22,7 @@ fn main() {
                 String::new()
             });
 
-            if !file_contents.is_empty() {
-                scan_token(&file_contents);
-            }
+            scan_token(&file_contents);
         }
         _ => {
             writeln!(io::stderr(), "Unknown command: {}", command).unwrap();
