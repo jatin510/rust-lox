@@ -54,6 +54,7 @@ pub fn scan_token(file_contents: &str) -> i32 {
                 if peekable.next() == Some('/') {
                     while let Some(c) = chars.next() {
                         if c == '\n' {
+                            line_number += 1;
                             break;
                         }
                     }
