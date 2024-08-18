@@ -70,7 +70,24 @@ pub fn scan_token(file_contents: &str) -> i32 {
                     println!("BANG {} null", c);
                 }
             }
-
+            '<' => {
+                let mut peekable = chars.clone().peekable();
+                if peekable.next() == Some('=') {
+                    println!("LESS_EQUAL <= null");
+                    chars.next();
+                } else {
+                    println!("LESS {} null", c);
+                }
+            }
+            '>' => {
+                let mut peekable = chars.clone().peekable();
+                if peekable.next() == Some('=') {
+                    println!("GREATER_EQUAL >= null");
+                    chars.next();
+                } else {
+                    println!("GREATER {} null", c);
+                }
+            }
             _ => {
                 eprintln!("[line {}] Error: Unexpected character: {}", line_number, c);
                 result = 65;
