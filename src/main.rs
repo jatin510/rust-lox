@@ -83,9 +83,17 @@ pub fn scan_token(file_contents: &str) -> i32 {
             }
             '<' => {
                 let mut peekable = chars.clone().peekable();
-                if peekable.next() == Some('=') {
+                let next_char = peekable.next();
+
+                if next_char == Some('=') {
                     println!("LESS_EQUAL <= null");
                     chars.next();
+                } else if next_char == Some('|') {
+                    while let Some(c) = chars.next() {
+                        if c == '>' {
+                            break;
+                        }
+                    }
                 } else {
                     println!("LESS {} null", c);
                 }
@@ -99,6 +107,8 @@ pub fn scan_token(file_contents: &str) -> i32 {
                     println!("GREATER {} null", c);
                 }
             }
+            ' ' => {}
+            '\t' => {}
             _ => {
                 eprintln!("[line {}] Error: Unexpected character: {}", line_number, c);
                 result = 65;
