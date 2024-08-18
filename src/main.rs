@@ -33,10 +33,12 @@ fn main() {
     }
 }
 
-pub fn scan_token(file_content: &str) -> i32 {
+pub fn scan_token(file_contents: &str) -> i32 {
     let mut line_number = 1;
     let mut result = 0;
-    file_content.chars().for_each(|c| {
+    let mut chars = file_contents.chars();
+
+    while let Some(c) = chars.next() {
         match c {
             '(' => println!("LEFT_PAREN {} null", c),
             ')' => println!("RIGHT_PAREN {} null", c),
@@ -50,12 +52,22 @@ pub fn scan_token(file_content: &str) -> i32 {
             '/' => println!("SLASH {} null", c),
             ';' => println!("SEMICOLON {} null", c),
             '\n' => line_number += 1,
+            '=' => {
+                let mut peekable = chars.clone().peekable();
+                if peekable.next() == Some('=') {
+                    println!("EQUAL_EQUAL {}{} null", c, c);
+                    chars.next();
+                } else {
+                    println!("EQUAL {} null", c);
+                }
+            }
             _ => {
                 eprintln!("[line {}] Error: Unexpected character: {}", line_number, c);
                 result = 65;
             }
         }
-    });
+    };
+
     println!("EOF  null");
     return result;
 }
