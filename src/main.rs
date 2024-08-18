@@ -1,6 +1,7 @@
 use std::env;
 use std::fs;
 use std::io::{self, Write};
+use std::process::exit;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -22,7 +23,8 @@ fn main() {
                 String::new()
             });
 
-            scan_token(&file_contents);
+            let result = scan_token(&file_contents);
+            exit(result)
         }
         _ => {
             writeln!(io::stderr(), "Unknown command: {}", command).unwrap();
@@ -31,7 +33,9 @@ fn main() {
     }
 }
 
-pub fn scan_token(file_content: &str) {
+pub fn scan_token(file_content: &str) -> i32 {
+    let mut line_number = 1;
+    let mut result = 0;
     file_content.chars().for_each(|c| {
         match c {
             '(' => println!("LEFT_PAREN {} null", c),
@@ -45,9 +49,14 @@ pub fn scan_token(file_content: &str) {
             '-' => println!("MINUS {} null", c),
             '/' => println!("SLASH {} null", c),
             ';' => println!("SEMICOLON {} null", c),
-            _ => (println!("not handled yet {} null", c)),
+            '\n' => line_number += 1,
+            _ => {
+                eprintln!("[line {}] Error: Unexpected character: {}", line_number, c);
+                result = 65;
+            }
         }
     });
     println!("EOF  null");
+    return result;
 }
 
