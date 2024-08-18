@@ -127,6 +127,24 @@ pub fn scan_token(file_contents: &str) -> i32 {
                     result = 65;
                 }
             }
+
+            '0'..='9' => {
+                let mut number = String::new();
+                number.push(c);
+
+                while let Some(c) = chars.next() {
+                    if c.is_digit(10) {
+                        number.push(*c);
+                        chars.next();
+                    } else if c == '.' {
+                        number.push('.');
+                    } else {
+                        break;
+                    }
+                }
+
+                println!("NUMBER {} {}", number, number);
+            }
             ' ' => {}
             '\t' => {}
             _ => {
