@@ -49,7 +49,18 @@ pub fn scan_token(file_contents: &str) -> i32 {
             ',' => println!("COMMA {} null", c),
             '+' => println!("PLUS {} null", c),
             '-' => println!("MINUS {} null", c),
-            '/' => println!("SLASH {} null", c),
+            '/' => {
+                let mut peekable = chars.clone().peekable();
+                if peekable.next() == Some('/') {
+                    while let Some(c) = chars.next() {
+                        if c == '\n' {
+                            break;
+                        }
+                    }
+                } else {
+                    println!("SLASH {} null", c);
+                }
+            }
             ';' => println!("SEMICOLON {} null", c),
             '\n' => line_number += 1,
             '=' => {
