@@ -134,8 +134,7 @@ pub fn scan_token(file_contents: &str) -> i32 {
 
                 while let Some(c) = chars.next() {
                     if c.is_digit(10) {
-                        number.push(*c);
-                        chars.next();
+                        number.push(c);
                     } else if c == '.' {
                         number.push('.');
                     } else {
