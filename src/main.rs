@@ -61,6 +61,16 @@ pub fn scan_token(file_contents: &str) -> i32 {
                     println!("EQUAL {} null", c);
                 }
             }
+            '!' => {
+                let mut peekable = chars.clone().peekable();
+                if peekable.next() == Some('=') {
+                    println!("BANG_EQUAL != null");
+                    chars.next();
+                } else {
+                    println!("BANG {} null", c);
+                }
+            }
+
             _ => {
                 eprintln!("[line {}] Error: Unexpected character: {}", line_number, c);
                 result = 65;
@@ -72,3 +82,22 @@ pub fn scan_token(file_contents: &str) -> i32 {
     return result;
 }
 
+
+// TODO
+// i will use it later
+enum Token {
+    LeftParen,
+    RightParen,
+    LeftBrace,
+    RightBrace,
+    Star,
+    Dot,
+    Comma,
+    Plus,
+    Minus,
+    Slash,
+    Semicolon,
+    Equal,
+    EqualEqual,
+    Bang,
+}
