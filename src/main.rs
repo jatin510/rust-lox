@@ -108,6 +108,25 @@ pub fn scan_token(file_contents: &str) -> i32 {
                     println!("GREATER {} null", c);
                 }
             }
+            '"' => {
+                let mut word = String::new();
+                let mut is_complete_string = false;
+                while let Some(c) = chars.next() {
+                    if c == '"' {
+                        is_complete_string = true;
+                        break;
+                    }
+                    word.push(c);
+                }
+
+
+                if is_complete_string {
+                    println!("STRING \"{}\" {}", word, word);
+                } else {
+                    eprintln!("[line {}] Error: Unterminated string.", line_number);
+                    result = 65;
+                }
+            }
             ' ' => {}
             '\t' => {}
             _ => {
