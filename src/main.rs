@@ -1,7 +1,26 @@
+mod lexer;
+
 use std::env;
 use std::fs;
 use std::io::{self, Write};
 use std::process::exit;
+use std::str::FromStr;
+
+#[derive(Debug, PartialEq)]
+pub enum CommandType {
+    Tokenize,
+}
+
+impl FromStr for CommandType {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "tokenize" => Ok(CommandType::Tokenize),
+            _ => Err(()),
+        }
+    }
+}
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -10,11 +29,12 @@ fn main() {
         return;
     }
 
-    let command = &args[1]; // Parse it a ENUM
+    let command = CommandType::from_str(&args[1]).unwrap();
     let filename = &args[2]; // Validate
 
-    match command.as_str() { // Use enum match case
-        "tokenize" => {
+
+    match command {
+        CommandType::Tokenize => {
             // You can use print statements as follows for debugging, they'll be visible when running tests.
             writeln!(io::stderr(), "Logs from your program will appear here!").unwrap();
 
@@ -28,7 +48,7 @@ fn main() {
             exit(result)
         }
         _ => {
-            writeln!(io::stderr(), "Unknown command: {}", command).unwrap();
+            writeln!(io::stderr(), "Unknown command: {:?}", command).unwrap();
             return;
         }
     }
@@ -225,29 +245,3 @@ mod tests {
     }
 }
 
-// TODO
-// i will use it later
-enum Token {
-    LeftParen,
-    RightParen,
-    LeftBrace,
-    RightBrace,
-    Star,
-    Dot,
-    Comma,
-    Plus,
-    Minus,
-    Slash,
-    Semicolon,
-    Equal,
-    EqualEqual,
-    Bang,
-}
-
-// impl TryFrom<&str> for Token {
-//     type Error = ();
-//
-//     fn try_from(value: &str) -> Result<Self, Self::Error> {
-//         todo!()
-//     }
-// }
