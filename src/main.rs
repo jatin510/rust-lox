@@ -23,7 +23,8 @@ fn main() {
                 String::new()
             });
 
-            let result = scan_token(&file_contents);
+            let (result, token_output_string) = scan_token(&file_contents);
+            println!("{}", token_output_string);
             exit(result)
         }
         _ => {
@@ -33,22 +34,42 @@ fn main() {
     }
 }
 
-pub fn scan_token(file_contents: &str) -> i32 {
+pub fn scan_token(file_contents: &str) -> (i32, String) {
     let mut line_number = 1;
     let mut result = 0;
     let mut chars = file_contents.chars();
 
+    let mut token_output_string = String::new();
+
     while let Some(c) = chars.next() {
         match c {
-            '(' => println!("LEFT_PAREN {} null", c),
-            ')' => println!("RIGHT_PAREN {} null", c),
-            '{' => println!("LEFT_BRACE {} null", c),
-            '}' => println!("RIGHT_BRACE {} null", c),
-            '*' => println!("STAR {} null", c),
-            '.' => println!("DOT {} null", c),
-            ',' => println!("COMMA {} null", c),
-            '+' => println!("PLUS {} null", c),
-            '-' => println!("MINUS {} null", c),
+            '(' => {
+                token_output_string.push_str("LEFT_PAREN ( null\n");
+            }
+            ')' => {
+                token_output_string.push_str("RIGHT_PAREN ) null\n");
+            }
+            '{' => {
+                token_output_string.push_str("LEFT_BRACE { null\n");
+            }
+            '}' => {
+                token_output_string.push_str("RIGHT_BRACE } null\n");
+            }
+            '*' => {
+                token_output_string.push_str("STAR * null\n");
+            }
+            '.' => {
+                token_output_string.push_str("DOT . null\n");
+            }
+            ',' => {
+                token_output_string.push_str("COMMA , null\n");
+            }
+            '+' => {
+                token_output_string.push_str("PLUS + null\n");
+            }
+            '-' => {
+                token_output_string.push_str("MINUS - null\n");
+            }
             '/' => {
                 let mut peekable = chars.clone().peekable();
                 if peekable.next() == Some('/') {
@@ -59,27 +80,30 @@ pub fn scan_token(file_contents: &str) -> i32 {
                         }
                     }
                 } else {
-                    println!("SLASH {} null", c);
+                    token_output_string.push_str("SLASH / null\n");
                 }
             }
-            ';' => println!("SEMICOLON {} null", c),
+            ';' => {
+                token_output_string.push_str("SEMICOLON ; null\n");
+            }
             '\n' => line_number += 1,
             '=' => {
                 let mut peekable = chars.clone().peekable();
                 if peekable.next() == Some('=') {
-                    println!("EQUAL_EQUAL {}{} null", c, c);
+                    token_output_string.push_str("EQUAL_EQUAL == null\n");
+
                     chars.next();
                 } else {
-                    println!("EQUAL {} null", c);
+                    token_output_string.push_str("EQUAL = null\n");
                 }
             }
             '!' => {
                 let mut peekable = chars.clone().peekable();
                 if peekable.next() == Some('=') {
-                    println!("BANG_EQUAL != null");
+                    token_output_string.push_str("BANG_EQUAL != null\n");
                     chars.next();
                 } else {
-                    println!("BANG {} null", c);
+                    token_output_string.push_str("BANG ! null\n");
                 }
             }
             '<' => {
@@ -87,7 +111,7 @@ pub fn scan_token(file_contents: &str) -> i32 {
                 let next_char = peekable.next();
 
                 if next_char == Some('=') {
-                    println!("LESS_EQUAL <= null");
+                    token_output_string.push_str("LESS_EQUAL <= null\n");
                     chars.next();
                 } else if next_char == Some('|') {
                     while let Some(c) = chars.next() {
@@ -96,16 +120,16 @@ pub fn scan_token(file_contents: &str) -> i32 {
                         }
                     }
                 } else {
-                    println!("LESS {} null", c);
+                    token_output_string.push_str(&format!("LESS {} null\n", c));
                 }
             }
             '>' => {
                 let mut peekable = chars.clone().peekable();
                 if peekable.next() == Some('=') {
-                    println!("GREATER_EQUAL >= null");
+                    token_output_string.push_str("GREATER >= null\n");
                     chars.next();
                 } else {
-                    println!("GREATER {} null", c);
+                    token_output_string.push_str(&format!("GREATER {} null\n", c));
                 }
             }
             '"' => {
@@ -121,9 +145,9 @@ pub fn scan_token(file_contents: &str) -> i32 {
 
 
                 if is_complete_string {
-                    println!("STRING \"{}\" {}", word, word);
+                    token_output_string.push_str(&format!("STRING \"{}\" {}\n", word, word));
                 } else {
-                    eprintln!("[line {}] Error: Unterminated string.", line_number);
+                    token_output_string.push_str(&format!("[line {}] Error: Unterminated string.\n", line_number));
                     result = 65;
                 }
             }
@@ -141,20 +165,19 @@ pub fn scan_token(file_contents: &str) -> i32 {
                         break;
                     }
                 }
-
-                println!("NUMBER {} {}", number, number);
+                token_output_string.push_str(&format!("NUMBER {} {}\n", number, number));
             }
             ' ' => {}
             '\t' => {}
             _ => {
-                eprintln!("[line {}] Error: Unexpected character: {}", line_number, c);
+                token_output_string.push_str(&format!("[line {}] Error: Unexpected character: {}\n", line_number, c));
                 result = 65;
             }
         }
     };
 
-    println!("EOF  null");
-    return result;
+    token_output_string.push_str("EOF  null");
+    return (result, token_output_string);
 }
 
 
