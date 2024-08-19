@@ -10,10 +10,10 @@ fn main() {
         return;
     }
 
-    let command = &args[1];
-    let filename = &args[2];
+    let command = &args[1]; // Parse it a ENUM
+    let filename = &args[2]; // Validate
 
-    match command.as_str() {
+    match command.as_str() { // Use enum match case
         "tokenize" => {
             // You can use print statements as follows for debugging, they'll be visible when running tests.
             writeln!(io::stderr(), "Logs from your program will appear here!").unwrap();
@@ -154,18 +154,47 @@ pub fn scan_token(file_contents: &str) -> (i32, String) {
 
             '0'..='9' => {
                 let mut number = String::new();
+                let mut output_number = String::new();
+
+                let mut has_dot_appeared = false; // to keep track of fraction number
+                let mut is_decimal = false;
                 number.push(c);
 
-                while let Some(c) = chars.next() {
+                let mut peekable = chars.clone().peekable();
+                while let Some(c) = peekable.peek() {
                     if c.is_digit(10) {
-                        number.push(c);
-                    } else if c == '.' {
+                        number.push(*c);
+                        chars.next();
+                    } else if *c == '.' && has_dot_appeared == false {
+                        // now check the second character if it is not a digit then break;
+                        let mut peekable_clone = peekable.clone();
+                        peekable_clone.next();
+
+                        if let Some(c) = peekable_clone.peek() {
+                            // println!("hello world {}", c);
+                            if !c.is_digit(10) {
+                                break;
+                            }
+                        } else {
+                            break;
+                        }
+
+                        has_dot_appeared = true;
                         number.push('.');
+                        chars.next();
                     } else {
                         break;
                     }
+
+                    peekable.next();
                 }
-                token_output_string.push_str(&format!("NUMBER {} {}\n", number, number));
+                if !has_dot_appeared {
+                    output_number.push_str(&format!("{}.0", number));
+                } else {
+                    output_number.push_str(&format!("{}", number));
+                }
+
+                token_output_string.push_str(&format!("NUMBER {} {}\n", number, output_number));
             }
             ' ' => {}
             '\t' => {}
@@ -180,6 +209,21 @@ pub fn scan_token(file_contents: &str) -> (i32, String) {
     return (result, token_output_string);
 }
 
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_scan_token_number_with_dots() {
+        let file_contents = "1234.1234.1234.";
+        let (result, token_output_string) = scan_token(file_contents);
+        println!("{}", token_output_string);
+        let expected_output_token_string = "NUMBER 1234.1234 1234.1234\nDOT . null\nNUMBER 1234 1234.0\nDOT . null\nEOF  null";
+        assert_eq!(result, 0);
+        assert_eq!(token_output_string, expected_output_token_string);
+    }
+}
 
 // TODO
 // i will use it later
@@ -199,3 +243,11 @@ enum Token {
     EqualEqual,
     Bang,
 }
+
+// impl TryFrom<&str> for Token {
+//     type Error = ();
+//
+//     fn try_from(value: &str) -> Result<Self, Self::Error> {
+//         todo!()
+//     }
+// }
