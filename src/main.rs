@@ -126,7 +126,7 @@ pub fn scan_token(file_contents: &str) -> (i32, String) {
             '>' => {
                 let mut peekable = chars.clone().peekable();
                 if peekable.next() == Some('=') {
-                    token_output_string.push_str("GREATER >= null\n");
+                    token_output_string.push_str("GREATER_EQUAL >= null\n");
                     chars.next();
                 } else {
                     token_output_string.push_str(&format!("GREATER {} null\n", c));
@@ -147,7 +147,7 @@ pub fn scan_token(file_contents: &str) -> (i32, String) {
                 if is_complete_string {
                     token_output_string.push_str(&format!("STRING \"{}\" {}\n", word, word));
                 } else {
-                    token_output_string.push_str(&format!("[line {}] Error: Unterminated string.\n", line_number));
+                    writeln!(io::stderr(), "[line {}] Error: Unterminated string.", line_number).unwrap();
                     result = 65;
                 }
             }
@@ -199,7 +199,7 @@ pub fn scan_token(file_contents: &str) -> (i32, String) {
             ' ' => {}
             '\t' => {}
             _ => {
-                token_output_string.push_str(&format!("[line {}] Error: Unexpected character: {}\n", line_number, c));
+                writeln!(io::stderr(), "[line {}] Error: Unexpected character: {}", line_number, c).unwrap();
                 result = 65;
             }
         }
