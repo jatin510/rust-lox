@@ -57,12 +57,16 @@ fn main() {
 pub fn scan_token(file_contents: &str) -> (i32, String) {
     let mut line_number = 1;
     let mut result = 0;
+
     let mut chars = file_contents.chars();
+    let mut chars_peekable = chars.clone().peekable();
 
     let mut token_output_string = String::new();
 
-    while let Some(c) = chars.next() {
-        match c {
+    while let Some(char_peek) = chars_peekable.peek() {
+        let mut next_char_count = 1;
+
+        match char_peek {
             '(' => {
                 token_output_string.push_str("LEFT_PAREN ( null\n");
             }
@@ -91,8 +95,8 @@ pub fn scan_token(file_contents: &str) -> (i32, String) {
                 token_output_string.push_str("MINUS - null\n");
             }
             '/' => {
-                let mut peekable = chars.clone().peekable();
-                if peekable.next() == Some('/') {
+                // let mut peekable = chars.clone().peekable();
+                if char_peek.peek() == Some('/') {
                     while let Some(c) = chars.next() {
                         if c == '\n' {
                             line_number += 1;
@@ -140,7 +144,7 @@ pub fn scan_token(file_contents: &str) -> (i32, String) {
                         }
                     }
                 } else {
-                    token_output_string.push_str(&format!("LESS {} null\n", c));
+                    token_output_string.push_str(&format!("LESS {} null\n", char_peek));
                 }
             }
             '>' => {
@@ -149,7 +153,7 @@ pub fn scan_token(file_contents: &str) -> (i32, String) {
                     token_output_string.push_str("GREATER_EQUAL >= null\n");
                     chars.next();
                 } else {
-                    token_output_string.push_str(&format!("GREATER {} null\n", c));
+                    token_output_string.push_str(&format!("GREATER {} null\n", char_peek));
                 }
             }
             '"' => {
@@ -178,7 +182,7 @@ pub fn scan_token(file_contents: &str) -> (i32, String) {
 
                 let mut has_dot_appeared = false; // to keep track of fraction number
                 let mut is_decimal = false;
-                number.push(c);
+                number.push(*char_peek);
 
                 let mut peekable = chars.clone().peekable();
                 while let Some(c) = peekable.peek() {
@@ -219,9 +223,14 @@ pub fn scan_token(file_contents: &str) -> (i32, String) {
             ' ' => {}
             '\t' => {}
             _ => {
-                writeln!(io::stderr(), "[line {}] Error: Unexpected character: {}", line_number, c).unwrap();
+                writeln!(io::stderr(), "[line {}] Error: Unexpected character: {}", line_number, char_peek).unwrap();
                 result = 65;
             }
+        }
+
+        for i in 0..next_char_count {
+            chars_peekable.next();
+            chars.next();
         }
     };
 
