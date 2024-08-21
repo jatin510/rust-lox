@@ -211,13 +211,40 @@ pub fn scan_token(file_contents: &str) -> (i32, String) {
                 if !has_dot_appeared {
                     output_number.push_str(&format!("{}.0", number));
                 } else {
-                    output_number.push_str(&format!("{}", number));
+                    // Format the number, removing unnecessary trailing zeros
+                    let parsed_number: f64 = number.parse::<f64>().unwrap();
+
+                    // Format the number, removing unnecessary trailing zeros
+                    let output_number_str = if parsed_number.fract() == 0.0 {
+                        format!("{:.1}", number) // No decimal part, format as integer
+                    } else {
+                        format!("{}", number) // Retain full precision
+                    };
+                    output_number.push_str(&format!("{}", output_number_str));
                 }
 
                 token_output_string.push_str(&format!("NUMBER {} {}\n", number, output_number));
             }
             ' ' => {}
             '\t' => {}
+            'A'..='z' => {
+                let mut word = String::new();
+                word.push(c);
+
+                let mut peekable = chars.clone().peekable();
+                while let Some(char) = peekable.peek() {
+                    if char.is_alphabetic() || char.is_digit(10) || *char == '_' {
+                        word.push(*char);
+                        chars.next();
+                    } else {
+                        break;
+                    }
+
+                    peekable.next();
+                }
+
+                token_output_string.push_str(&format!("IDENTIFIER {} null\n", word));
+            }
             _ => {
                 writeln!(io::stderr(), "[line {}] Error: Unexpected character: {}", line_number, c).unwrap();
                 result = 65;
