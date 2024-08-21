@@ -243,7 +243,25 @@ pub fn scan_token(file_contents: &str) -> (i32, String) {
                     peekable.next();
                 }
 
-                token_output_string.push_str(&format!("IDENTIFIER {} null\n", word));
+                match word.as_str() {
+                    "and" => token_output_string.push_str("AND and null\n"),
+                    "class" => token_output_string.push_str("CLASS class null\n"),
+                    "else" => token_output_string.push_str("ELSE else null\n"),
+                    "false" => token_output_string.push_str("FALSE false null\n"),
+                    "for" => token_output_string.push_str("FOR for null\n"),
+                    "fun" => token_output_string.push_str("FUN fun null\n"),
+                    "if" => token_output_string.push_str("IF if null\n"),
+                    "nil" => token_output_string.push_str("NIL nil null\n"),
+                    "or" => token_output_string.push_str("OR or null\n"),
+                    "print" => token_output_string.push_str("PRINT print null\n"),
+                    "return" => token_output_string.push_str("RETURN return null\n"),
+                    "super" => token_output_string.push_str("SUPER super null\n"),
+                    "this" => token_output_string.push_str("THIS this null\n"),
+                    "true" => token_output_string.push_str("TRUE true null\n"),
+                    "var" => token_output_string.push_str("VAR var null\n"),
+                    "while" => token_output_string.push_str("WHILE while null\n"),
+                    _ => token_output_string.push_str(&format!("IDENTIFIER {} null\n", word))
+                }
             }
             _ => {
                 writeln!(io::stderr(), "[line {}] Error: Unexpected character: {}", line_number, c).unwrap();
