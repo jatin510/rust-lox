@@ -212,10 +212,10 @@ pub fn scan_token(file_contents: &str) -> (i32, String) {
                     output_number.push_str(&format!("{}.0", number));
                 } else {
                     // Format the number, removing unnecessary trailing zeros
-                    let parsed_number: f64 = number.parse::<f64>().unwrap();
+                    let number: f64 = number.parse::<f64>().unwrap();
 
                     // Format the number, removing unnecessary trailing zeros
-                    let output_number_str = if parsed_number.fract() == 0.0 {
+                    let output_number_str = if number.fract() == 0.0 {
                         format!("{:.1}", number) // No decimal part, format as integer
                     } else {
                         format!("{}", number) // Retain full precision
