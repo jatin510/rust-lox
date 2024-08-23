@@ -5,6 +5,7 @@ use std::fs;
 use std::io::{self, Write};
 use std::process::exit;
 use std::str::FromStr;
+use crate::lexer::Scanner;
 
 #[derive(Debug, PartialEq)]
 pub enum CommandType {
@@ -43,9 +44,17 @@ fn main() {
                 String::new()
             });
 
-            let (result, token_output_string) = scan_token(&file_contents);
-            println!("{}", token_output_string);
-            exit(result)
+
+            let mut scanner = Scanner::new(file_contents);
+            let tokens = scanner.scan_tokens();
+
+            // for token in tokens {
+            //     println!("{}", token);
+            // }
+
+            if scanner.had_error {
+                exit(65);
+            }
         }
         _ => {
             writeln!(io::stderr(), "Unknown command: {:?}", command).unwrap();
